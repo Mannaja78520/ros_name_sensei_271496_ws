@@ -1,15 +1,25 @@
 # install this git
 git clone https://github.com/Mannaja78520/ros_name_sensei_271496_ws.git
 
+# cd in to git repo
+cd ros_name_sensei_271496_ws
+
+
 # build
-docker build -t ros2-python312-app .
+docker build -t ros2-name-sensei-proj-app .
 
-#run
 
+
+#run docker
 xhost +local:docker
 docker run -it \
     --net=host \
     --env="DISPLAY" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
     --device=/dev/video0:/dev/video0 \
-    ros2-python312-app
+    ros2-name-sensei-proj-app
+
+
+
+#run node
+ros2 launch name_sensei_proj control_launch.py
