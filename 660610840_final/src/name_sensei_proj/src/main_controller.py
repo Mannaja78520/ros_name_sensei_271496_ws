@@ -15,10 +15,10 @@ class MainDecisionServer(Node):
         
         # 1. Subscribe รับข้อมูลขาเข้าแบบ MecanumCmd
         self.create_subscription(MecanumCmd, '/cmd_vel_control', self.hand_callback, qos_profile_sensor_data)
-        self.create_subscription(MecanumCmd, '/cmd_collision', self.collision_callback, 10)
+        self.create_subscription(MecanumCmd, '/cmd_collision', self.collision_callback, qos_profile_sensor_data)
         
         # 2. Publish ข้อมูลขาออกเป็น Twist ตามที่คุณต้องการ
-        self.real_cmd_pub = self.create_publisher(Twist, '/cmd_vel_command', 10)
+        self.real_cmd_pub = self.create_publisher(Twist, '/cmd_vel_command', qos_profile_sensor_data)
         self.status_pub = self.create_publisher(String, '/system_mode', 10)
 
         self.srv = self.create_service(SetMode, '/set_master_lock', self.handle_lock_service)
@@ -56,6 +56,9 @@ class MainDecisionServer(Node):
         # --- ส่วนการตัดสินใจ (Priority Logic) ---
         if self.master_lock:
             # หยุดนิ่ง (Twist เริ่มต้นเป็น 0 อยู่แล้ว)
+            final_msg.linear.x = self.last_collision_cmd.x
+            final_msg.linear.y = self.last_collision_cmd.y
+            final_msg.angular.z = self.last_collision_cmd.omega_z
             mode_str = "LOCKED: SERVICE OVERRIDE"
         
         elif self.collision_active:
