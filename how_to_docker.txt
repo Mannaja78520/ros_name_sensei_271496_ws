@@ -6,13 +6,15 @@ cd ros_name_sensei_271496_ws
 
 
 # build
-docker build -t ros2-name-sensei-proj-app .
-
+sudo usermod -aG docker cv
+newgrp docker
+groups
+sudo docker build -t ros2-name-sensei-proj-app .
+xhost +local:docker
 
 
 #run docker
-xhost +local:docker
-docker run -it \
+sudo docker run -it \
     --net=host \
     --env="DISPLAY" \
     --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
@@ -23,3 +25,7 @@ docker run -it \
 
 #run node
 ros2 launch name_sensei_proj control_launch.py
+
+
+#docker ไม่ใช้กล้อง
+docker run -it --rm --network host ros2-name-sensei-proj-app
